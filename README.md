@@ -1,4 +1,3 @@
-# Plasma-Etch-Monitoring-and-Root-Cause-Analysis
 # LAM 9600 etch: SPC and PCA root-cause workflow
 
 Statistical process control, multivariate (PCA) monitoring and root-cause analysis on the LAM 9600 metal-etch data
@@ -12,13 +11,12 @@ The three CSVs must be in `data/`: `MACHINE_Data.csv`, `OES_DATA.csv`, `RFM_DATA
 **Run everything** (about 15 s):
 ```
 conda activate lam9600
-cd lam9600_spc
 python run_pipeline.py
 ```
 It prints the excluded wafers, two data checks (OES endpoint vs clear time, RFM vs machine timing), the detection
 table, the classification table and the clear-time link. CSVs go to `results/`, charts to `figures/`.
 
-**Change a setting.** Edit `lam9600/config.py`, then re-run:
+**Change a setting.** Edit `analysis/config.py`, then re-run:
 - `PHASE1_EXPS`, `PHASE2_EXP`: which experiments build the model and which are monitored.
 - `ALPHA` (control-limit level), `KMAX`, `CV_FOLDS`: PCA settings.
 - `KEY_VARS`: variables that get I-MR charts.
@@ -27,8 +25,8 @@ table, the classification table and the clear-time link. CSVs go to `results/`, 
 
 **Use the pieces in Python.**
 ```python
-from lam9600 import load, features as F
-from lam9600.model import PCAMonitor
+from analysis import load, features as F
+from analysis.model import PCAMonitor
 
 meta = load.wafer_meta()                      # one row per wafer: experiment, role, fault, family
 m = load.load_machine()                       # wide: one row per wafer and sample
@@ -59,14 +57,14 @@ Steps 5 and 6 are run for the `machine` and `fused` blocks in the reports; the c
 | file | job |
 |---|---|
 | `run_pipeline.py` | runs every step |
-| `lam9600/config.py` | paths, analysis choices, key variables, interpretation hints |
-| `lam9600/load.py` | read the CSVs, find truncated wafers, wafer table and roles |
-| `lam9600/features.py` | one row per wafer: machine, OES, RFM features |
-| `lam9600/eda.py` | experiment effect, clear-time trend |
-| `lam9600/spc.py` | I-MR, run rules, EWMA, capability, within-wafer X-bar/R |
-| `lam9600/model.py` | PCA monitor: T2, Q, cross-validated k, leave-one-out limits |
-| `lam9600/rca.py` | contributions, fault report, classifier |
-| `lam9600/plots.py` | all figures |
+| `analysis/config.py` | paths, analysis choices, key variables, interpretation hints |
+| `analysis/load.py` | read the CSVs, find truncated wafers, wafer table and roles |
+| `analysis/features.py` | one row per wafer: machine, OES, RFM features |
+| `analysis/eda.py` | experiment effect, clear-time trend |
+| `analysis/spc.py` | I-MR, run rules, EWMA, capability, within-wafer X-bar/R |
+| `analysis/model.py` | PCA monitor: T2, Q, cross-validated k, leave-one-out limits |
+| `analysis/rca.py` | contributions, fault report, classifier |
+| `analysis/plots.py` | all figures |
 
 ## What comes from the data, and what is a choice
 Derived from the data: excluded wafers, wafer roles (from `set` and `experiment`), phase channels (from `unit`),
