@@ -11,7 +11,6 @@ The three CSVs must be in `data/`: `MACHINE_Data.csv`, `OES_DATA.csv`, `RFM_DATA
 **Run everything** (about 15 s):
 ```
 conda activate lam9600
-cd lam9600_spc
 python run_pipeline.py
 ```
 It prints the excluded wafers, two data checks (OES endpoint vs clear time, RFM vs machine timing), the detection
