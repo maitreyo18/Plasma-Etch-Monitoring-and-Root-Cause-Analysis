@@ -1,0 +1,2 @@
+wafer,fault,alarm,t2_ratio,q_ratio,top1,top1_share,top2,top2_share,top3,top3_share,top4,top4_share,top5,top5_share,reading_top1
+2936,TCP +10,False,0.6082520652194031,0.8288348416499498,Endpt A_std_s5 (+2.3 sd),0.084,TCP Top Pwr_std_s5 (-0.7 sd),0.067,TCP Tuner_mean_s4 (-4.6 sd),0.052,Endpt A_mean_s4 (+3.2 sd),0.044,Endpt A_plateau (+2.9 sd),0.043,etch-product emission level: etch rate / plasma density changed

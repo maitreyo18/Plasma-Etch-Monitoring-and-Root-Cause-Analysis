@@ -1,0 +1,21 @@
+,fault,true,predicted,correct
+2915,TCP +50,TCP,TCP,True
+2916,RF -12,RF,Pr,False
+2917,RF +10,RF,Pr,False
+2918,Pr +3,Pr,Pr,True
+2936,TCP +10,TCP,TCP,True
+2937,BCl3 +5,BCl3,Cl2,False
+2938,Pr -2,Pr,Pr,True
+2939,Cl2 -5,Cl2,Pr,False
+2940,He Chuck,He,RF,False
+3120,TCP +30,TCP,TCP,True
+3121,Cl2 +5,Cl2,Pr,False
+3141,BCl3 -5,BCl3,BCl3,True
+3142,Pr +2,Pr,Pr,True
+3143,TCP -20,TCP,TCP,True
+3318,TCP -15,TCP,TCP,True
+3319,Cl2 -10,Cl2,Cl2,True
+3320,RF -12,RF,RF,True
+3339,BCl3 +10,BCl3,Pr,False
+3340,Pr +1,Pr,Pr,True
+3341,TCP +20,TCP,TCP,True

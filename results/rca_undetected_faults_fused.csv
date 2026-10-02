@@ -1,0 +1,4 @@
+wafer,fault,alarm,t2_ratio,q_ratio,top1,top1_share,top2,top2_share,top3,top3_share,top4,top4_share,top5,top5_share,reading_top1
+2936,TCP +10,False,0.5184809019657002,0.3186482154217511,rfm:S34I5_mean_s4 (-2.2 sd),0.014,rfm:S3I5_mean_s4 (-2.1 sd),0.013,rfm:S1V4_mean_s4 (-1.8 sd),0.01,machine:Endpt A_plateau (+3.1 sd),0.01,oes:261.8nm_pos3 (+2.0 sd),0.01,TCP coil feed electrical response
+2940,He Chuck,False,0.1359200417355874,0.35277387074888367,machine:He Press_std_s4 (+9.6 sd),0.016,rfm:S34PV2_sin_s4 (-0.1 sd),0.011,rfm:S34PV2_cos_s4 (+0.1 sd),0.011,rfm:S1V5_mean_s4 (-0.1 sd),0.009,rfm:S34I2_mean_s5 (+0.8 sd),0.009,backside helium: chuck cooling / regulation
+3121,Cl2 +5,False,0.20672541994813282,0.42269277211307094,machine:Pressure_std_s4 (+6.9 sd),0.017,oes:725nm_pos3 (+0.5 sd),0.013,machine:TCP Rfl Pwr_mean_s5 (-0.2 sd),0.012,machine:Endpt A_std_s4 (+0.7 sd),0.012,machine:TCP Rfl Pwr_std_s5 (+0.0 sd),0.012,chamber pressure shift

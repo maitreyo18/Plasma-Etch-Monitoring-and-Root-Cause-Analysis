@@ -1,0 +1,34 @@
+var,experiment,n_normal,n_fault,false_alarm_3sigma,false_alarm_any,detected_3sigma,detected_any
+BCl3 Flow_mean_s4,29,34,9,0,1,0,0
+BCl3 Flow_mean_s4,31,36,5,0,1,1,3
+BCl3 Flow_mean_s4,33,37,6,0,0,0,1
+Cl2 Flow_mean_s4,29,34,9,0,1,0,0
+Cl2 Flow_mean_s4,31,36,5,0,0,0,1
+Cl2 Flow_mean_s4,33,37,6,0,2,0,0
+Endpt A_plateau,29,34,9,11,32,7,9
+Endpt A_plateau,31,36,5,14,32,4,5
+Endpt A_plateau,33,37,6,15,31,5,6
+He Press_mean_s4,29,34,9,0,0,0,1
+He Press_mean_s4,31,36,5,0,0,0,0
+He Press_mean_s4,33,37,6,1,2,0,0
+He Press_std_s4,29,34,9,1,12,1,7
+He Press_std_s4,31,36,5,0,0,0,0
+He Press_std_s4,33,37,6,2,25,0,6
+Pressure_mean_s4,29,34,9,2,12,5,7
+Pressure_mean_s4,31,36,5,0,1,3,4
+Pressure_mean_s4,33,37,6,0,10,4,5
+RF Btm Pwr_mean_s4,29,34,9,0,0,0,0
+RF Btm Pwr_mean_s4,31,36,5,1,1,0,1
+RF Btm Pwr_mean_s4,33,37,6,0,0,0,0
+TCP Top Pwr_mean_s4,29,34,9,0,1,0,0
+TCP Top Pwr_mean_s4,31,36,5,0,0,0,0
+TCP Top Pwr_mean_s4,33,37,6,0,0,0,1
+Vat Valve_mean_s4,29,34,9,2,30,6,8
+Vat Valve_mean_s4,31,36,5,0,0,1,2
+Vat Valve_mean_s4,33,37,6,2,22,4,6
+clear_time,29,34,9,9,32,3,7
+clear_time,31,36,5,1,14,2,3
+clear_time,33,37,6,1,15,1,3
+step5_time,29,34,9,10,31,2,7
+step5_time,31,36,5,3,21,2,4
+step5_time,33,37,6,1,29,1,4

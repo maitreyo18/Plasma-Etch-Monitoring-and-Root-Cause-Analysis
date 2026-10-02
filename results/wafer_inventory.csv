@@ -1,0 +1,128 @@
+wafer,experiment,run_order,set,fault,in_oes,in_rfm,family,role,clear_time,step5_time,oes_endpoint_idx
+2901,29,1,calibration,normal,True,True,,phase1,54.63405,61.75115000000001,14.0
+2902,29,2,calibration,normal,True,False,,phase1,52.524,58.9041,14.0
+2903,29,3,calibration,normal,True,True,,phase1,51.7299,58.884,14.0
+2904,29,4,calibration,normal,True,True,,phase1,51.14056,58.50165,13.0
+2905,29,5,calibration,normal,True,True,,phase1,51.4361,57.615700000000004,13.0
+2906,29,6,calibration,normal,True,True,,phase1,51.619820000000004,58.610060000000004,13.0
+2907,29,7,calibration,normal,True,True,,phase1,50.030020000000015,57.1948,13.0
+2908,29,8,calibration,normal,True,True,,phase1,50.12012999999999,57.6999,13.0
+2909,29,9,calibration,normal,True,True,,phase1,49.542,57.24000000000001,13.0
+2910,29,10,calibration,normal,True,True,,phase1,49.06,56.22,13.0
+2911,29,11,calibration,normal,True,True,,phase1,49.04298,56.155,13.0
+2912,29,12,calibration,normal,True,True,,phase1,49.0293,56.229800000000004,13.0
+2913,29,13,calibration,normal,True,True,,phase1,49.034600000000005,56.220400000000005,13.0
+2914,29,14,calibration,normal,True,True,,phase1,48.531200000000005,56.1468,13.0
+2915,29,15,test,TCP +50,True,True,TCP,fault,49.01998,55.18580000000001,12.0
+2916,29,16,test,RF -12,False,False,RF,fault,50.0698,57.2492,
+2917,29,17,test,RF +10,True,True,RF,fault,48.060100000000006,55.30990000000001,13.0
+2918,29,18,test,Pr +3,True,True,Pr,fault,43.964800000000004,50.55110000000001,11.0
+2919,29,19,calibration,normal,True,False,,phase1,47.9799,55.140299999999996,12.0
+2920,29,20,calibration,normal,True,True,,phase1,48.0,55.1202,12.0
+2921,29,21,calibration,normal,True,True,,phase1,49.0098,56.2307,13.0
+2922,29,22,calibration,normal,True,True,,phase1,46.9687,54.23180000000001,12.0
+2923,29,23,calibration,normal,True,True,,phase1,48.05910000000001,54.09170000000001,12.0
+2924,29,24,calibration,normal,True,True,,phase1,47.021499999999996,54.151,12.0
+2925,29,25,calibration,normal,True,True,,phase1,47.2305,54.082300000000004,12.0
+2926,29,26,calibration,normal,True,True,,phase1,46.59179999999999,55.1197,12.0
+2927,29,27,calibration,normal,True,True,,phase1,47.0107,54.1188,12.0
+2928,29,28,calibration,normal,True,True,,phase1,48.16017,55.13089999999999,12.0
+2929,29,29,calibration,normal,True,True,,phase1,47.1611,54.181599999999996,12.0
+2930,29,30,calibration,normal,True,True,,phase1,47.970699999999994,55.31929999999999,12.0
+2931,29,31,calibration,normal,True,True,,phase1,48.0297,53.163199999999996,12.0
+2932,29,32,calibration,normal,True,True,,phase1,46.959399999999995,54.0901,12.0
+2933,29,33,calibration,normal,True,True,,phase1,46.98115000000001,54.11055000000001,12.0
+2934,29,34,calibration,normal,True,True,,phase1,48.03999999999999,55.1509,12.0
+2935,29,35,calibration,normal,True,True,,phase1,47.975,54.11979999999999,12.0
+2936,29,36,test,TCP +10,True,True,TCP,fault,45.91505,53.0362,12.0
+2937,29,37,test,BCl3 +5,True,True,BCl3,fault,48.059599999999996,55.0857,12.0
+2938,29,38,test,Pr -2,True,True,Pr,fault,50.06982000000001,57.119700000000016,13.0
+2939,29,39,test,Cl2 -5,True,True,Cl2,fault,49.12060000000001,56.100400000000015,13.0
+2940,29,40,test,He Chuck,True,True,He,fault,46.393499999999996,54.1309,12.0
+2941,29,41,calibration,normal,True,True,,phase1,46.0312,53.0707,12.0
+2942,29,42,calibration,normal,True,True,,phase1,45.9297,53.0877,12.0
+2943,29,43,calibration,normal,True,True,,phase1,47.0079,53.0881,12.0
+3101,31,1,calibration,normal,True,True,,phase1,51.048899999999996,58.20909999999999,13.0
+3102,31,2,calibration,normal,True,True,,phase1,49.6583,57.17939999999999,13.0
+3103,31,3,calibration,normal,True,True,,phase1,50.109399999999994,57.1325,13.0
+3104,31,4,calibration,normal,True,True,,phase1,49.03722,56.41230000000001,13.0
+3105,31,5,calibration,normal,True,True,,phase1,49.5001,56.1268,13.0
+3106,31,6,calibration,normal,True,True,,phase1,49.10359999999999,56.193099999999994,13.0
+3107,31,7,calibration,normal,True,True,,phase1,46.99029999999999,54.1214,12.0
+3108,31,8,calibration,normal,True,True,,phase1,49.03327,54.1291,13.0
+3109,31,9,calibration,normal,True,True,,phase1,47.02548,54.140899999999995,12.0
+3110,31,10,calibration,normal,True,True,,phase1,47.017649999999996,55.099599999999995,12.0
+3111,31,11,calibration,normal,True,True,,phase1,48.03134,55.230199999999996,12.0
+3112,31,12,calibration,normal,True,True,,phase1,46.98839999999999,54.0921,12.0
+3113,31,13,calibration,normal,True,True,,phase1,49.02933,55.1523,12.0
+3114,31,14,calibration,normal,True,True,,phase1,46.91204000000001,54.109600000000015,12.0
+3115,31,15,calibration,normal,True,True,,phase1,48.000049999999995,55.677899999999994,12.0
+3116,31,16,calibration,normal,True,True,,phase1,47.9669,55.1579,13.0
+3117,31,17,calibration,normal,True,True,,phase1,47.46489999999999,54.136799999999994,12.0
+3118,31,18,calibration,normal,True,True,,phase1,47.0196,54.1098,12.0
+3119,31,19,calibration,normal,True,True,,phase1,47.939499999999995,55.1196,12.0
+3120,31,20,test,TCP +30,True,True,TCP,fault,46.949299999999994,54.09139999999999,12.0
+3121,31,21,test,Cl2 +5,True,True,Cl2,fault,44.89840000000001,51.070600000000006,12.0
+3123,31,23,calibration,normal,True,True,,phase1,46.91990000000001,54.07640000000001,12.0
+3124,31,24,calibration,normal,True,True,,phase1,47.976575000000004,55.18322499999999,12.0
+3126,31,26,calibration,normal,True,True,,phase1,47.0098,55.14669999999999,12.0
+3127,31,27,calibration,normal,True,True,,phase1,46.980599999999995,54.0903,12.0
+3128,31,28,calibration,normal,True,True,,phase1,45.9922,53.0961,12.0
+3129,31,29,calibration,normal,True,True,,phase1,45.9474,53.681599999999996,12.0
+3130,31,30,calibration,normal,True,True,,phase1,45.9474,53.1233,12.0
+3131,31,31,calibration,normal,True,True,,phase1,47.0196,54.1157,12.0
+3132,31,32,calibration,normal,True,True,,phase1,46.9591,54.1482,12.0
+3133,31,33,calibration,normal,True,True,,phase1,45.98444,53.1522,12.0
+3134,31,34,calibration,normal,True,True,,phase1,47.939479999999996,54.10929999999999,12.0
+3135,31,35,calibration,normal,True,True,,phase1,46.929680000000005,54.11950000000001,12.0
+3136,31,36,calibration,normal,True,True,,phase1,45.8985,53.05629999999999,12.0
+3137,31,37,calibration,normal,True,True,,phase1,45.947379999999995,54.0953,12.0
+3138,31,38,calibration,normal,True,True,,phase1,47.95905,54.0802,12.0
+3139,31,39,calibration,normal,True,True,,phase1,45.9179,53.148300000000006,12.0
+3140,31,40,calibration,normal,True,True,,phase1,46.949160000000006,53.109400000000015,12.0
+3141,31,41,test,BCl3 -5,True,True,BCl3,fault,46.96090000000001,53.15220000000001,12.0
+3142,31,42,test,Pr +2,True,True,Pr,fault,43.9141,50.011599999999994,11.0
+3143,31,43,test,TCP -20,True,True,TCP,fault,46.92965,54.14820000000001,12.0
+3301,33,1,calibration,normal,True,True,,phase2,46.96894999999999,54.18794999999999,12.0
+3302,33,2,calibration,normal,True,True,,phase2,46.9532,54.187799999999996,12.0
+3303,33,3,calibration,normal,True,True,,phase2,48.000080000000004,54.0783,10.0
+3304,33,4,calibration,normal,True,True,,phase2,49.01568,55.2183,12.0
+3305,33,5,calibration,normal,True,True,,phase2,46.95315,54.077749999999995,12.0
+3306,33,6,calibration,normal,False,True,,phase2,47.01565,54.141,
+3307,33,7,calibration,normal,True,True,,phase2,47.1251,54.09420000000001,12.0
+3308,33,8,calibration,normal,True,True,,phase2,46.96885,54.1565,12.0
+3309,33,9,calibration,normal,True,True,,phase2,46.968799999999995,55.1562,12.0
+3310,33,10,calibration,normal,True,True,,phase2,47.109480000000005,54.09420000000001,12.0
+3311,33,11,calibration,normal,True,True,,phase2,47.06253,55.156,12.0
+3312,33,12,calibration,normal,True,True,,phase2,47.4847,54.1251,12.0
+3313,33,13,calibration,normal,True,True,,phase2,46.0,54.0933,12.0
+3314,33,14,calibration,normal,True,True,,phase2,45.90628,54.1407,12.0
+3315,33,15,calibration,normal,True,True,,phase2,46.906330000000004,55.15610000000001,12.0
+3316,33,16,calibration,normal,True,True,,phase2,48.0157,54.12500000000001,12.0
+3317,33,17,calibration,normal,True,True,,phase2,46.9844,54.12480000000001,12.0
+3318,33,18,test,TCP -15,True,True,TCP,fault,46.9376,54.0938,12.0
+3319,33,19,test,Cl2 -10,True,True,Cl2,fault,51.016000000000005,58.21960000000001,13.0
+3320,33,20,test,RF -12,True,True,RF,fault,48.031600000000005,55.15700000000001,12.0
+3321,33,21,calibration,normal,True,True,,phase2,46.99999999999999,53.063,12.0
+3322,33,22,calibration,normal,True,True,,phase2,45.9219,53.06250000000001,12.0
+3323,33,23,calibration,normal,True,True,,phase2,46.921980000000005,53.04730000000001,12.0
+3324,33,24,calibration,normal,True,True,,phase2,45.9689,53.06219999999999,12.0
+3325,33,25,calibration,normal,False,True,,phase2,45.906650000000006,51.203500000000005,
+3326,33,26,calibration,normal,True,True,,phase2,44.9063,51.10980000000001,12.0
+3327,33,27,calibration,normal,True,True,,phase2,44.937580000000004,51.0471,12.0
+3328,33,28,calibration,normal,True,True,,phase2,46.984429999999996,52.64029999999999,12.0
+3329,33,29,calibration,normal,True,True,,phase2,44.968799999999995,51.1098,12.0
+3330,33,30,calibration,normal,True,True,,phase2,45.953199999999995,51.0311,12.0
+3331,33,31,calibration,normal,True,True,,phase2,47.078230000000005,53.093700000000005,12.0
+3332,33,32,calibration,normal,True,True,,phase2,44.95309999999999,51.0781,12.0
+3333,33,33,calibration,normal,True,True,,phase2,45.9376,53.1251,12.0
+3334,33,34,calibration,normal,True,True,,phase2,45.890699999999995,53.125,12.0
+3335,33,35,calibration,normal,True,True,,phase2,45.906299999999995,53.04709999999999,12.0
+3336,33,36,calibration,normal,True,True,,phase2,45.9845,50.156499999999994,12.0
+3337,33,37,calibration,normal,True,True,,phase2,45.96878,54.12480000000001,12.0
+3338,33,38,calibration,normal,True,True,,phase2,46.0938,53.06300000000001,12.0
+3339,33,39,test,BCl3 +10,True,True,BCl3,fault,47.968799999999995,55.62529999999999,12.0
+3340,33,40,test,Pr +1,True,True,Pr,fault,44.9688,51.1096,11.0
+3341,33,41,test,TCP +20,True,True,TCP,fault,46.9688,52.593700000000005,12.0
+3342,33,42,calibration,normal,True,True,,phase2,46.000049999999995,51.0311,12.0
+3343,33,43,calibration,normal,True,True,,phase2,45.9688,53.09420000000001,12.0
