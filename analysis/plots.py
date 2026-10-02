@@ -114,6 +114,8 @@ def scree(mon, name):
     axs[0].set_title("Component choice")
     cv = mon.cum_var()[:15]
     axs[1].plot(range(1, len(cv) + 1), cv, marker="o", color=BLUE)
+    axs[0].set_xticks(k)
+    axs[1].set_xticks(range(1, len(cv) + 1, 2))
     axs[1].set_xlabel("components")
     axs[1].set_ylabel("cumulative variance")
     axs[1].set_title("Variance explained")
