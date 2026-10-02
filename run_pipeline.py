@@ -1,28 +1,56 @@
 import itertools
+import warnings
 import numpy as np
 import pandas as pd
 from analysis import load, features as F, eda, spc, rca, plots
-from analysis.config import RESULTS, KEY_VARS
+from analysis.config import RESULTS, KEY_VARS, ALPHA
 from analysis.model import PCAMonitor
 
 OUTCOME_COLS = ["clear_time", "step5_time", "oes_endpoint_idx"]
+PRIMARY = ("experiment", "experiment")     # (centring, scaling) of the model used for plots and root cause
+warnings.filterwarnings("ignore")
 
 
 def save(df, name):
     df.to_csv(RESULTS / f"{name}.csv")
 
 
-def evaluate(mon, X, meta, block, center):
+def evaluate(mon, X, meta, block, center, scale):
     sc, Z, T, E = mon.score(X, meta)
     role = meta.loc[sc.index, "role"]
     f = sc[role == "fault"]
-    row = {"block": block, "centering": center, "k": mon.k, "n_features": len(mon.cols), "n_train": mon.n, "t2_limit": mon.t2lim, "q_limit": mon.qlim,
+    p2 = sc[role == "phase2"]
+    if center == "experiment":      # experiment-33 centre and scale computed without the wafer being scored
+        p2 = mon.score_loo_ref(X, meta, p2.index)
+    row = {"block": block, "centering": center, "scaling": scale, "k": mon.k, "n_features": len(mon.cols),
+           "n_train": mon.n, "t2_limit": mon.t2lim, "q_limit": mon.qlim,
            "t2_limit_parametric": mon.t2lim_f, "q_limit_parametric": mon.qlim_jm,
            "faults": len(f), "detected": int(f.alarm.sum()),
            "detected_T2": int((f.t2_ratio > 1).sum()), "detected_Q": int((f.q_ratio > 1).sum()),
            "false_alarm_phase1": sc[role == "phase1"].alarm.mean(),
-           "false_alarm_phase2": sc[role == "phase2"].alarm.mean()}
+           "false_alarm_phase2": p2.alarm.mean()}
     return row, sc, Z, T
+
+
+def late_fusion(X, meta, use):
+    """One model per block (per-experiment scaling); a wafer alarms if any block alarms.
+    The alpha is split across the 3 blocks and 2 statistics so the combined false-alarm level stays near 1 - ALPHA."""
+    alpha = 1 - (1 - ALPHA) / 6
+    a, h = {}, {}
+    for name in ("machine", "oes", "rfm"):
+        Xb = X[name].loc[X[name].index.intersection(use.index)]
+        train = Xb.index[meta.loc[Xb.index, "role"] == "phase1"]
+        mon = PCAMonitor("experiment", alpha, scale="experiment").fit(Xb, meta, train).calibrate_loo(Xb, meta, train)
+        sc = mon.score(Xb, meta)[0]
+        a[name] = sc.alarm
+        h[name] = mon.score_loo_ref(Xb, meta, sc.index[meta.loc[sc.index, "role"] == "phase2"]).alarm
+    anyb = lambda d: pd.concat(d, axis=1).fillna(False).astype(bool).any(axis=1)
+    alarm, honest = anyb(a), anyb(h)
+    role = meta.loc[alarm.index, "role"]
+    row = {"block": "late fusion (all blocks)", "centering": "experiment", "scaling": "experiment",
+           "faults": int((role == "fault").sum()), "detected": int(alarm[role == "fault"].sum()),
+           "false_alarm_phase1": alarm[role == "phase1"].mean(), "false_alarm_phase2": honest.mean()}
+    return row, alarm
 
 
 def main():
@@ -89,24 +117,27 @@ def main():
     for name, Xb in X.items():
         Xb = Xb.loc[Xb.index.intersection(use.index)]
         train = Xb.index[meta.loc[Xb.index, "role"] == "phase1"]
-        for center in ("experiment", "global"):
-            mon = PCAMonitor(center, blocks=bmap if name == "fused" else None).fit(Xb, meta, train)
+        for center, scale in (("experiment", "experiment"), ("experiment", "pooled"), ("global", "pooled")):
+            mon = PCAMonitor(center, blocks=bmap if name == "fused" else None, scale=scale).fit(Xb, meta, train)
             mon.calibrate_loo(Xb, meta, train)
-            row, sc, Z, T = evaluate(mon, Xb, meta, name, center)
+            row, sc, Z, T = evaluate(mon, Xb, meta, name, center, scale)
             rows.append(row)
-            models[(name, center)] = (mon, sc, Z, T)
-            if center == "experiment":
+            models[(name, center, scale)] = (mon, sc, Z, T)
+            if (center, scale) == PRIMARY:
                 plots.scree(mon, name)
                 plots.monitor_chart(mon, sc, meta, name)
                 plots.score_plot(mon, T, meta, name)
                 save(sc.join(meta[["experiment", "run_order", "role", "fault"]]), f"pca_scores_{name}")
+    row, alarm = late_fusion(X, meta, use)
+    rows.append(row)
+    save(alarm.rename("alarm").to_frame().join(meta[["experiment", "run_order", "role", "fault"]]), "pca_late_fusion_alarms")
     summ = pd.DataFrame(rows)
     summ.to_csv(RESULTS / "pca_detection_summary.csv", index=False)
     print(summ.round(3).to_string(index=False))
 
     # ---- Root cause: contributions per fault wafer (machine block is the most interpretable)
     for name in ("machine", "fused"):
-        mon, sc, Z, T = models[(name, "experiment")]
+        mon, sc, Z, T = models[(name, *PRIMARY)]
         con = rca.contributions(mon, Z, T)
         rep = rca.fault_report(mon, sc, Z, con, meta)
         rep.to_csv(RESULTS / f"rca_fault_report_{name}.csv", index=False)
@@ -114,10 +145,10 @@ def main():
         top = {w: (meta.fault[w], (con["rbc"].loc[w] / con["rbc"].loc[w].sum()).nlargest(6)) for w in rep.wafer}
         plots.contribution_grid(top, name)
         print(f"{name}: undetected faults {(~rep.alarm).sum()} of {len(rep)}")
-    mon, sc, Z, T = models[("fused", "experiment")]
+    mon, sc, Z, T = models[("fused", *PRIMARY)]
     acc = []
     for name in X:
-        _, scb, Zb, _ = models[(name, "experiment")]
+        _, scb, Zb, _ = models[(name, *PRIMARY)]
         for rep_, clf, target, by in itertools.product(("abs", "signed"), ("centroid", "lda"),
                                                        ("family", "mechanism"), ("experiment", "wafer")):
             cl = rca.classify(Zb, meta, rep_, clf, target, by)
@@ -130,7 +161,7 @@ def main():
     acc.to_csv(RESULTS / "rca_classification_accuracy.csv", index=False)
     best = acc[(acc.representation == "abs") & (acc.leave_one_out_by == "experiment")]
     print(best.round(2).to_string(index=False))
-    rca.classify(models[("machine", "experiment")][2], meta).to_csv(RESULTS / "rca_classification_machine_abs_centroid.csv")
+    rca.classify(models[("machine", *PRIMARY)][2], meta).to_csv(RESULTS / "rca_classification_machine_abs_centroid.csv")
     link, rho = rca.clear_time_link(sc, res["clear_time"])
     link.join(meta[["fault", "role"]]).to_csv(RESULTS / "rca_clear_time_link.csv")
     print(f"Spearman(worst alarm ratio, |clear time z|) = {rho:.2f}")
