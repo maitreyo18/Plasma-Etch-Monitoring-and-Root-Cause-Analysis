@@ -1,2 +1,103 @@
 # Plasma-Etch-Monitoring-and-Root-Cause-Analysis
-Python workflow that detects faulty wafers on an aluminium plasma etcher using SPC charts and PCA monitoring.
+# LAM 9600 etch: SPC and PCA root-cause workflow
+
+Statistical process control, multivariate (PCA) monitoring and root-cause analysis on the LAM 9600 metal-etch data
+(129 wafers, 3 experiments, 21 induced faults; machine, optical-emission and RF-monitor blocks).
+
+## Usage
+
+**Requirements.** The `lam9600` conda env (Python 3.10 with pandas, numpy, scipy, scikit-learn, matplotlib).
+The three CSVs must be in `data/`: `MACHINE_Data.csv`, `OES_DATA.csv`, `RFM_DATA.csv`.
+
+**Run everything** (about 15 s):
+```
+conda activate lam9600
+cd lam9600_spc
+python run_pipeline.py
+```
+It prints the excluded wafers, two data checks (OES endpoint vs clear time, RFM vs machine timing), the detection
+table, the classification table and the clear-time link. CSVs go to `results/`, charts to `figures/`.
+
+**Change a setting.** Edit `lam9600/config.py`, then re-run:
+- `PHASE1_EXPS`, `PHASE2_EXP`: which experiments build the model and which are monitored.
+- `ALPHA` (control-limit level), `KMAX`, `CV_FOLDS`: PCA settings.
+- `KEY_VARS`: variables that get I-MR charts.
+- `CLEAR_TIME_SPEC = (LSL, USL)`: set to get Cp/Cpk; `None` reports process spread only.
+- `Endpt_WINDOW`, `OES_SKIP_FIRST`, `TRUNCATED_FRAC`: feature and exclusion choices.
+
+**Use the pieces in Python.**
+```python
+from lam9600 import load, features as F
+from lam9600.model import PCAMonitor
+
+meta = load.wafer_meta()                      # one row per wafer: experiment, role, fault, family
+m = load.load_machine()                       # wide: one row per wafer and sample
+fm = F.machine_features(m)                    # one row per wafer
+use = meta[meta.role != "excluded"]
+X = fm.drop(columns=["clear_time", "step5_time"]).loc[use.index]
+train = X.index[meta.loc[X.index, "role"] == "phase1"]
+
+mon = PCAMonitor("experiment").fit(X, meta, train)   # centre per experiment, choose k by cross-validation
+mon.calibrate_loo(X, meta, train)                    # leave-one-out control limits
+scores, Z, T, E = mon.score(X, meta)                 # t2, q, ratios to limit, alarm flag
+```
+
+## Workflow (what `run_pipeline.py` does, in order)
+
+| step | what happens | module | main outputs |
+|---|---|---|---|
+| 1. Load and clean | Pivot each long CSV to wide form; exclude wafers whose record is truncated (sample count below half the median in any step or block); assign roles: Phase I, Phase II, fault | `load.py` | `wafer_inventory.csv` |
+| 2. Features | One row per wafer. Machine: mean and std per channel and step, clear time, Endpt A plateau and slope. OES: main-etch mean of each line and position up to the endpoint, Al/Cl and AlCl/BCl ratios, position asymmetry. RFM: per-step mean and std (phase as sin and cos), harmonic distortion | `features.py` | `features_machine.csv`, `features_oes.csv`, `features_rfm.csv` |
+| 3. Exploratory checks | Experiment effect per feature (eta-squared), clear-time drift per experiment, correlation heatmap | `eda.py`, `plots.py` | `eda_experiment_effect.csv`, `eda_clear_time_trend.csv`, `eda_*.png` |
+| 4. Univariate SPC | I-MR per experiment with run rules and EWMA; process spread of clear time; X-bar/R on subgroups inside each wafer | `spc.py` | `spc_imr_summary.csv`, `spc_fault_z.csv`, `spc_capability_clear_time.csv`, `spc_xbar_r_within_summary.csv`, `imr_*.png`, `xbar_r_He_Press.png` |
+| 5. PCA monitoring | Centre per experiment, autoscale on Phase I, fit PCA, choose k by cross-validated PRESS, T2 and Q, leave-one-out limits. Run on machine, OES, RFM and fused blocks, with per-experiment and global centring | `model.py` | `pca_detection_summary.csv`, `pca_scores_<block>.csv`, `pca_scree_*.png`, `pca_monitor_*.png`, `pca_scores_*.png` |
+| 6. Root cause | Contributions to T2 and Q (classical and reconstruction-based), top contributors per fault wafer, fault classifier, link to clear time, undetected faults | `rca.py` | `rca_fault_report_<block>.csv`, `rca_undetected_faults_<block>.csv`, `rca_classification_accuracy.csv`, `rca_clear_time_link.csv`, `rca_contrib_*.png` |
+
+Steps 5 and 6 are run for the `machine` and `fused` blocks in the reports; the classifier grid covers all four blocks.
+
+## Layout
+| file | job |
+|---|---|
+| `run_pipeline.py` | runs every step |
+| `lam9600/config.py` | paths, analysis choices, key variables, interpretation hints |
+| `lam9600/load.py` | read the CSVs, find truncated wafers, wafer table and roles |
+| `lam9600/features.py` | one row per wafer: machine, OES, RFM features |
+| `lam9600/eda.py` | experiment effect, clear-time trend |
+| `lam9600/spc.py` | I-MR, run rules, EWMA, capability, within-wafer X-bar/R |
+| `lam9600/model.py` | PCA monitor: T2, Q, cross-validated k, leave-one-out limits |
+| `lam9600/rca.py` | contributions, fault report, classifier |
+| `lam9600/plots.py` | all figures |
+
+## What comes from the data, and what is a choice
+Derived from the data: excluded wafers, wafer roles (from `set` and `experiment`), phase channels (from `unit`),
+features, all control limits, number of components.
+Choices (in `config.py`): Phase I = normals of experiments 29 and 31, Phase II = normals of experiment 33; Endpt A
+plateau window; first OES spectra skipped; alpha = 0.99; `MECHANISM` grouping (pressure, gas flow, power, He chuck).
+The OES endpoint uses the Al lines (394.4 and 395.8 nm); the data supports it (corr 0.78 with machine clear time).
+`HINTS` are physical readings used only to label contributors; no statistic uses them.
+No spec limits exist in the data, so Cp/Cpk are skipped unless `CLEAR_TIME_SPEC` is set.
+
+## Method notes
+- Every feature is centred per experiment (mean of that experiment's normal wafers), then autoscaled with Phase I.
+  For experiment 33 the centre uses its own normals, a mild optimism for its false-alarm rate.
+- The F and Jackson-Mudholkar limits were far too tight (70 training wafers, 78 to 498 features), so the reported
+  limits are the 99th percentile of leave-one-out T2 and Q on Phase I wafers. Parametric limits stay in the summary.
+- Fused model: blocks are weighted so each carries equal total variance.
+- `clear_time`, `step5_time` and the OES endpoint index are kept out of PCA (outcomes) and used in SPC and the outcome link.
+
+## Results (see `results/`)
+- Experiments differ strongly (`eda_experiment_effect.csv`); clear time drifts down within each experiment.
+- PCA, 99% limit (`pca_detection_summary.csv`): machine 19/20 faults, false alarms 4% (Phase I) and 16% (Phase II);
+  fused 16/19, false alarms 3% and 3%. Global (not per-experiment) centring alarms on all Phase II normals.
+- Root cause (`rca_fault_report_machine.csv`): pressure faults point to Vat Valve; TCP faults to Endpt A, TCP Tuner,
+  RF Load; He Chuck to He Press spread; BCl3 -5 to BCl3 flow.
+- Classification (`rca_classification_accuracy.csv`, leave-one-experiment-out, 20 faults): using the size of each
+  deviation instead of its sign lifts the machine block from 0.45 to 0.65 (family; majority baseline 0.30). Mechanism
+  grouping with shrinkage LDA gives 0.80 (baseline 0.45); that is the best of 64 reported variants, so it is optimistic.
+  RFM and the fused model classify poorly (0.16 to 0.42 on family).
+- Alarm size is not related to the clear-time shift (Spearman 0.07).
+
+## Limits
+I-MR run rules on drifting clear time alarm on normal wafers (seasoning); no detrending is applied.
+Multiway PCA is not implemented. Experiment-33 limits rely on 70 training wafers from other experiments.
+With 19 to 20 faults, detection and accuracy figures carry wide uncertainty.
