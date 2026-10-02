@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -28,8 +29,12 @@ def press(Z, kmax, folds, seed=0):
 class PCAMonitor:
     """PCA fitted on Phase I normals; T2 and Q statistics with F / Jackson-Mudholkar limits."""
 
-    def __init__(self, center="experiment", alpha=ALPHA, blocks=None):
+    def __init__(self, center="experiment", alpha=ALPHA, blocks=None, weights=None, baseline=None, scale="pooled"):
+        """blocks: feature -> block (equal total variance per block); weights: feature -> weight (overrides blocks);
+        baseline: {experiment: wafers} used for that experiment's centre instead of all its normals;
+        scale: 'pooled' (Phase I spread) or 'experiment' (each experiment's own normal spread, floored)."""
         self.center, self.alpha, self.blocks = center, alpha, blocks
+        self.weights, self.baseline, self.scale = weights, baseline, scale
 
     def _centre(self, X, exp):
         mu = pd.DataFrame({e: self.mu[e] for e in exp.unique()}).T
@@ -38,8 +43,13 @@ class PCAMonitor:
     def fit(self, X, meta, train, k=None):
         X = X.replace([np.inf, -np.inf], np.nan)
         exp, role = meta.loc[X.index, "experiment"], meta.loc[X.index, "role"]
+        def ref(e):
+            if self.baseline and e in self.baseline:
+                return (exp == e) & X.index.isin(self.baseline[e])
+            return (exp == e) & role.isin(NORMAL)
+        self.ref_wafers = {e: list(X.index[ref(e)]) for e in exp.unique()}
         if self.center == "experiment":
-            self.mu = {e: X[(exp == e) & role.isin(NORMAL)].mean() for e in exp.unique()}
+            self.mu = {e: X[ref(e)].mean() for e in exp.unique()}
         else:
             g = X.loc[train].mean()
             self.mu = {e: g for e in exp.unique()}
@@ -47,12 +57,16 @@ class PCAMonitor:
         sd = Xc.loc[train].std(ddof=1)
         self.cols = sd.index[(sd > 1e-12) & Xc.loc[train].notna().all()]
         self.sd = sd[self.cols]
+        if self.scale == "experiment":
+            self.sd_e = {e: self._exp_sd(Xc[ref(e)]) for e in exp.unique()}
         w = pd.Series(1.0, index=self.cols)
-        if self.blocks is not None:
+        if self.weights is not None:
+            w = self.weights.reindex(self.cols).fillna(1.0)
+        elif self.blocks is not None:
             b = self.blocks[self.cols]
             w = 1 / np.sqrt(b.map(b.value_counts()))
         self.w = w
-        Zt = self._prep(Xc).loc[train].values
+        Zt = self._prep(Xc, exp).loc[train].values
         n = len(Zt)
         _, S, Vt = np.linalg.svd(Zt, full_matrices=False)
         self.lam_all = S ** 2 / (n - 1)
@@ -71,7 +85,8 @@ class PCAMonitor:
         """Replace the parametric limits by the alpha-quantile of leave-one-out (out-of-sample) T2 and Q."""
         stat = []
         for w in train:
-            m = PCAMonitor(self.center, self.alpha, self.blocks).fit(X.drop(index=w), meta, train.drop(w), k=self.k)
+            m = PCAMonitor(self.center, self.alpha, self.blocks, self.weights, self.baseline, self.scale).fit(
+                X.drop(index=w), meta, train.drop(w), k=self.k)
             s = m.score(X.loc[[w]], meta)[0]
             stat.append((s.t2.iloc[0], s.q.iloc[0]))
         stat = np.array(stat)
@@ -79,8 +94,28 @@ class PCAMonitor:
         self.t2lim, self.qlim = np.quantile(stat, self.alpha, axis=0)
         return self
 
-    def _prep(self, Xc):
-        return (Xc[self.cols] / self.sd * self.w).fillna(0)
+    def _exp_sd(self, Xc_ref):
+        return np.maximum(Xc_ref[self.cols].std(ddof=1), 0.5 * self.sd)     # floor: 50% of Phase I spread
+
+    def _prep(self, Xc, exp):
+        if self.scale == "experiment":
+            sd = pd.DataFrame(self.sd_e).T.loc[exp.values].set_axis(Xc.index)
+        else:
+            sd = self.sd
+        return (Xc[self.cols] / sd * self.w).fillna(0)
+
+    def score_loo_ref(self, X, meta, wafers):
+        """Score normal wafers using their experiment's centre and scale computed without that wafer."""
+        out = []
+        for w in wafers:
+            e = meta.experiment[w]
+            Xe = X.loc[[x for x in self.ref_wafers[e] if x != w]]
+            m = copy.copy(self)
+            m.mu = {**self.mu, e: Xe.mean()}
+            if self.scale == "experiment":
+                m.sd_e = {**self.sd_e, e: self._exp_sd(Xe - m.mu[e])}
+            out.append(m.score(X.loc[[w]], meta)[0])
+        return pd.concat(out)
 
     def _q_limit(self, lam):
         th1, th2, th3 = [(lam ** i).sum() for i in (1, 2, 3)]
@@ -91,8 +126,8 @@ class PCAMonitor:
     def score(self, X, meta):
         X = X.replace([np.inf, -np.inf], np.nan)
         exp = meta.loc[X.index, "experiment"]
-        Z = self._prep(self._centre(X, exp))
-        T = pd.DataFrame(Z.values @ self.P, index=Z.index)
+        Z = self._prep(self._centre(X, exp), exp)
+        T =pd.DataFrame(Z.values @ self.P, index=Z.index)
         E = Z - T.values @ self.P.T
         out = pd.DataFrame({"t2": ((T ** 2) / self.lam).sum(axis=1), "q": (E ** 2).sum(axis=1)})
         out["t2_ratio"], out["q_ratio"] = out.t2 / self.t2lim, out.q / self.qlim
