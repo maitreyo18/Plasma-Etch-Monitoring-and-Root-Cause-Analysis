@@ -8,7 +8,7 @@ Statistical process control, multivariate (PCA) monitoring and root-cause analys
 **Requirements.** The `lam9600` conda env (Python 3.10 with pandas, numpy, scipy, scikit-learn, matplotlib).
 The three CSVs must be in `data/`: `MACHINE_Data.csv`, `OES_DATA.csv`, `RFM_DATA.csv`.
 
-**Run everything** (about 15 s):
+**Run everything**:
 ```
 conda activate lam9600
 python run_pipeline.py
