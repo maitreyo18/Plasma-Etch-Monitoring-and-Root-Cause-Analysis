@@ -1,7 +1,7 @@
 # LAM 9600 etch: SPC and PCA root-cause workflow
 
 Statistical process control, multivariate (PCA) monitoring and root-cause analysis on the LAM 9600 metal-etch data
-(129 wafers, 3 experiments, 21 induced faults; machine, optical-emission and RF-monitor blocks).
+(129 wafers, 3 experiments, 19 induced faults; machine, optical-emission and RF-monitor blocks).
 
 ## Usage
 
