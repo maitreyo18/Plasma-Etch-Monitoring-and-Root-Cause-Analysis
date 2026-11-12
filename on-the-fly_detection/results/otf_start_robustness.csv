@@ -1,0 +1,11 @@
+case,first3_faults_caught,faults_detected,faults,false_alarms,normals
+actual order,0/0,6,6,1,37
+1 fault among first 3: 3318 (TCP -15),0/1,5,6,1,37
+1 fault among first 3: 3319 (Cl2 -10),0/1,5,6,1,37
+1 fault among first 3: 3320 (RF -12),0/1,5,6,1,37
+1 fault among first 3: 3339 (BCl3 +10),0/1,3,6,1,37
+1 fault among first 3: 3340 (Pr +1),0/1,3,6,1,37
+1 fault among first 3: 3341 (TCP +20),0/1,5,6,1,37
+"2 faults among first 3: 3318, 3339",0/2,2,6,1,37
+"2 faults among first 3: 3319, 3341",0/2,3,6,1,37
+"2 faults among first 3: 3320, 3340",0/2,3,6,1,37
