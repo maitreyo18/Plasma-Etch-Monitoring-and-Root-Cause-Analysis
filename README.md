@@ -102,7 +102,4 @@ No spec limits exist in the data, so Cp/Cpk are skipped unless `CLEAR_TIME_SPEC`
   RFM and the fused model are weaker or inconsistent (0.11 to 0.53 on family); OES reaches 0.58 but only 6 of its 19 faults alarm.
 - Alarm size is not related to the clear-time shift (Spearman 0.07).
 
-## Limits
-I-MR run rules on drifting clear time alarm on normal wafers (seasoning); no detrending is applied.
-Multiway PCA is not implemented. Experiment-33 limits rely on 70 training wafers from other experiments.
-With 19 to 20 faults, detection and accuracy figures carry wide uncertainty.
+
